@@ -1,0 +1,50 @@
+job_name: "alteryx-converted-job-2"
+display_name: "Alteryx Converted Job 2"
+description: "Alteryx converted job with client name, financial year, and accounting period parameters"
+
+parameters:
+  - name: "client_name"
+    type: "text"
+    label: "Client Name"
+    required: false
+    default: "Nike"
+    validation:
+      max_length: 100
+  
+  - name: "financial_year"
+    type: "enum"
+    label: "Financial Year"
+    required: false
+    default: "2025"
+    options:
+      - "2020"
+      - "2021"
+      - "2022"
+      - "2023"
+      - "2024"
+      - "2025"
+      - "2026"
+      - "2027"
+      - "2028"
+      - "2029"
+      - "2030"
+  
+  - name: "accounting_period"
+    type: "enum"
+    label: "Accounting Period"
+    required: false
+    default: "1"
+    options:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+      - "7"
+      - "8"
+      - "9"
+      - "10"
+      - "11"
+      - "12"
+

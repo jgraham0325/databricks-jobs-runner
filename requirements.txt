@@ -4,3 +4,5 @@ python-dotenv
 databricks-sdk==0.65.0
 psycopg2-binary
 pydantic
+streamlit
+pyyaml

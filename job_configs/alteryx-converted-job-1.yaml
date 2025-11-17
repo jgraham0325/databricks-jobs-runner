@@ -1,0 +1,31 @@
+job_name: "alteryx-converted-job-1"
+display_name: "Alteryx Converted Job 1"
+description: "Alteryx converted job with date range and client ID parameters"
+
+parameters:
+  - name: "startDate"
+    type: "date"
+    label: "Start Date"
+    required: true
+    default: "2025-01-01"
+    validation:
+      min_date: "2020-01-01"
+      max_date: "2030-12-31"
+  
+  - name: "endDate"
+    type: "date"
+    label: "End Date"
+    required: true
+    default: "2025-12-01"
+    validation:
+      min_date: "2020-01-01"
+      max_date: "2030-12-31"
+  
+  - name: "clientID"
+    type: "text"
+    label: "Client ID"
+    required: true
+    default: "nike"
+    validation:
+      max_length: 100
+
