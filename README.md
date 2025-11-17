@@ -2,7 +2,7 @@
 
 A Streamlit web application for running Databricks Jobs with dynamic parameter configuration. Define job parameters in YAML configuration files and submit jobs through an intuitive web interface.
 
-This project is also configured as a **Databricks Asset Bundle**, allowing you to deploy and manage Databricks jobs using the Databricks CLI.
+This project is also configured as a **Databricks Asset Bundle**, allowing you to deploy and manage Databricks jobs and the Streamlit app itself using the Databricks CLI.
 
 ## Technologies Used
 
@@ -14,10 +14,12 @@ This project is also configured as a **Databricks Asset Bundle**, allowing you t
 
 ## Databricks Asset Bundle
 
-This project is configured as a Databricks Asset Bundle, containing two job definitions:
+This project is configured as a Databricks Asset Bundle, containing:
 
-- `alteryx-converted-job-1`: Job with date range and client ID parameters
-- `alteryx-converted-job-2`: Job with client name, financial year, and accounting period parameters
+- **App**: `databricks-jobs-runner` - The Streamlit web application
+- **Jobs**: Two job definitions:
+  - `alteryx-converted-job-1`: Job with date range and client ID parameters
+  - `alteryx-converted-job-2`: Job with client name, financial year, and accounting period parameters
 
 ### Using the Asset Bundle
 
@@ -42,20 +44,39 @@ This project is configured as a Databricks Asset Bundle, containing two job defi
    ```bash
    databricks bundle deploy -t dev
    ```
+   
+   This will deploy both the Streamlit app and the job definitions to your Databricks workspace.
 
-5. **Run a job**:
+5. **Access the deployed app**:
+   After deployment, you can access your Streamlit app in the Databricks workspace. The app will be available at:
+   ```
+   https://your-workspace.cloud.databricks.com/apps/[app-name]
+   ```
+
+6. **Run a job**:
    ```bash
    databricks bundle run alteryx-converted-job-1 -t dev
    ```
 
 ### Bundle Structure
 
-- `databricks.yml`: Main bundle configuration file
+- `databricks.yml`: Main bundle configuration file (defines the app and includes job definitions)
+- `app.py`: Main Streamlit application file
 - `resources/jobs/`: Directory containing job definitions
   - `alteryx-converted-job-1.yml`: First job definition
   - `alteryx-converted-job-2.yml`: Second job definition
 
 **Note**: Before deploying, update the job definitions in `resources/jobs/` with your actual notebook paths and cluster configurations.
+
+### Deploying the App
+
+The Streamlit app is configured as a Databricks App resource in the bundle. When you run `databricks bundle deploy -t dev`, it will:
+
+1. Upload all application files (including `app.py`, `services/`, `job_configs/`, etc.) to your Databricks workspace
+2. Deploy the app so it can be accessed through the Databricks UI
+3. Deploy all job definitions configured in the bundle
+
+The app will use environment variables configured in your Databricks workspace. Make sure to set up the required environment variables (`DATABRICKS_HOST`, `DATABRICKS_CLIENT_ID`, `DATABRICKS_CLIENT_SECRET`, etc.) in your workspace settings.
 
 ### DAB Job Name Prefixes
 

@@ -4,6 +4,13 @@ bundle:
 include:
   - resources/jobs/*.yml
 
+resources:
+  apps:
+    databricks-jobs-runner:
+      name: databricks-jobs-runner
+      description: Streamlit app for running Databricks Jobs with dynamic parameter configuration
+      source_code_path: .
+
 targets:
   dev:
     mode: development

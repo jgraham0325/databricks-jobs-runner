@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+This is a streamlit app, so the .env and the requirements.txt are at the root of this directory. the app.py file should be too. Keep code simple, standard, and modularized. when we get to >3 endpoints. always leverage singleton services when possible
+
+wrap endpoints in a try/catch to ensure the app doesn't crash.
+
