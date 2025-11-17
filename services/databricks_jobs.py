@@ -10,6 +10,8 @@ class DatabricksJobsService:
     
     _instance = None
     _workspace_client = None
+    _current_user = None
+    _dab_target = None
     
     def __new__(cls):
         if cls._instance is None:
@@ -26,15 +28,87 @@ class DatabricksJobsService:
             )
         return self._workspace_client
     
+    def _get_current_user(self) -> Optional[str]:
+        """Get the current Databricks user name."""
+        if self._current_user is None:
+            try:
+                w = self._get_workspace_client()
+                current_user = w.current_user.me()
+                # Extract username from user object (could be user_name or user_name property)
+                if hasattr(current_user, 'user_name'):
+                    self._current_user = current_user.user_name
+                elif hasattr(current_user, 'userName'):
+                    self._current_user = current_user.userName
+                else:
+                    # Fallback: try to get from the string representation
+                    self._current_user = str(current_user)
+            except Exception as e:
+                # If we can't get the user, return None and fall back to pattern matching
+                return None
+        return self._current_user
+    
+    def _get_dab_target(self) -> str:
+        """Get the DAB target (defaults to 'dev')."""
+        if self._dab_target is None:
+            # Check environment variable first, then default to 'dev'
+            self._dab_target = os.getenv("DATABRICKS_BUNDLE_TARGET", "dev")
+        return self._dab_target
+    
+    def _get_dab_prefix(self) -> Optional[str]:
+        """Construct the DAB prefix pattern: '[target user]'."""
+        target = self._get_dab_target()
+        user = self._get_current_user()
+        if user:
+            return f"[{target} {user}]"
+        return None
+    
     def get_job_id_by_name(self, job_name: str) -> Optional[str]:
         """
         Lookup job ID by job name.
+        Handles both exact matches and Databricks Asset Bundle (DAB) prefixed names.
+        DAB adds prefixes like '[dev james_graham] job-name', so we match jobs for the current user.
+        Prioritizes DAB-prefixed jobs over exact matches to ensure we use the deployed bundle version.
         Returns the job ID if found, None otherwise.
         """
         try:
             w = self._get_workspace_client()
             jobs = list(w.jobs.list())
             
+            # Get the expected DAB prefix for the current user
+            dab_prefix = self._get_dab_prefix()
+            expected_full_name = f"{dab_prefix} {job_name}" if dab_prefix else None
+            
+            # PRIORITY 1: Try to match jobs with the current user's DAB prefix first
+            # This ensures we use the DAB-deployed version when available
+            if expected_full_name:
+                for job in jobs:
+                    if job.settings and job.settings.name == expected_full_name:
+                        return str(job.job_id)
+            
+            # PRIORITY 2: Match any job ending with the expected name that has a DAB prefix
+            # This handles cases where we can't determine the current user but can still find DAB jobs
+            # We prefer ANY DAB-prefixed job over exact matches
+            dab_prefixed_jobs = []
+            for job in jobs:
+                if job.settings and job.settings.name:
+                    job_name_full = job.settings.name
+                    # Match if job name ends with the expected name and has a DAB prefix format
+                    # DAB format: '[target user] job-name'
+                    if job_name_full.endswith(f"] {job_name}"):
+                        # If we have a prefix, prioritize jobs matching our prefix
+                        if dab_prefix and job_name_full.startswith(dab_prefix):
+                            return str(job.job_id)
+                        # Otherwise, collect all DAB-prefixed jobs
+                        else:
+                            dab_prefixed_jobs.append(job)
+            
+            # If we found any DAB-prefixed jobs (even if not matching our user), prefer them
+            if dab_prefixed_jobs:
+                # Return the first one found (could be enhanced to prefer current user if detectable)
+                return str(dab_prefixed_jobs[0].job_id)
+            
+            # PRIORITY 3: Fallback to exact match (for backward compatibility)
+            # Only used if no DAB-prefixed version is found
             for job in jobs:
                 if job.settings and job.settings.name == job_name:
                     return str(job.job_id)

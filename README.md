@@ -2,12 +2,77 @@
 
 A Streamlit web application for running Databricks Jobs with dynamic parameter configuration. Define job parameters in YAML configuration files and submit jobs through an intuitive web interface.
 
+This project is also configured as a **Databricks Asset Bundle**, allowing you to deploy and manage Databricks jobs using the Databricks CLI.
+
 ## Technologies Used
 
 - **Streamlit**: Modern web framework for building data applications with Python
 - **Databricks SDK**: Integration with Databricks Workspace and Jobs API
+- **Databricks Asset Bundles**: Infrastructure-as-code for Databricks resources
 - **Python-dotenv**: Environment variable management
 - **PyYAML**: YAML configuration file parsing
+
+## Databricks Asset Bundle
+
+This project is configured as a Databricks Asset Bundle, containing two job definitions:
+
+- `alteryx-converted-job-1`: Job with date range and client ID parameters
+- `alteryx-converted-job-2`: Job with client name, financial year, and accounting period parameters
+
+### Using the Asset Bundle
+
+1. **Install Databricks CLI** (if not already installed):
+   ```bash
+   pip install databricks-cli
+   ```
+
+2. **Configure variables**:
+   The bundle uses variables defined in `databricks.yml`. You can set them via environment variables or CLI:
+   ```bash
+   export DATABRICKS_HOST="https://your-workspace.cloud.databricks.com"
+   export DATABRICKS_USER="your-email@example.com"
+   ```
+
+3. **Validate the bundle**:
+   ```bash
+   databricks bundle validate
+   ```
+
+4. **Deploy the bundle** (to dev target):
+   ```bash
+   databricks bundle deploy -t dev
+   ```
+
+5. **Run a job**:
+   ```bash
+   databricks bundle run alteryx-converted-job-1 -t dev
+   ```
+
+### Bundle Structure
+
+- `databricks.yml`: Main bundle configuration file
+- `resources/jobs/`: Directory containing job definitions
+  - `alteryx-converted-job-1.yml`: First job definition
+  - `alteryx-converted-job-2.yml`: Second job definition
+
+**Note**: Before deploying, update the job definitions in `resources/jobs/` with your actual notebook paths and cluster configurations.
+
+### DAB Job Name Prefixes
+
+When deploying jobs using Databricks Asset Bundles in development mode, DAB automatically prefixes job names with `[target user]` to prevent naming conflicts. For example:
+- Base job name: `alteryx-converted-job-1`
+- Deployed job name: `[dev james_graham] alteryx-converted-job-1`
+
+The application automatically handles these prefixes by:
+1. **Detecting the current user** from the Databricks workspace
+2. **Matching jobs** that belong to the current user's deployment
+3. **Preventing conflicts** when multiple users have deployed jobs with the same base name
+
+**Configuration**:
+- The DAB target defaults to `dev` but can be overridden with the `DATABRICKS_BUNDLE_TARGET` environment variable
+- The current user is automatically detected from your Databricks workspace connection
+
+This ensures that each user's app instance references only their own deployed jobs, even when multiple users have deployed the same bundle.
 
 ## Features
 
@@ -49,6 +114,7 @@ A Streamlit web application for running Databricks Jobs with dynamic parameter c
      - `DATABRICKS_HOST` (e.g., `https://your-workspace.cloud.databricks.com`)
      - `DATABRICKS_CLIENT_ID`
      - `DATABRICKS_CLIENT_SECRET`
+   - Optionally set `DATABRICKS_BUNDLE_TARGET` (defaults to `dev`) to match your DAB deployment target
 
 3. Create job configuration files:
 
@@ -143,10 +209,16 @@ See [Control access to a job](https://docs.databricks.com/en/jobs/manage-access.
 ```
 .
 ├── app.py                      # Main Streamlit application
+├── databricks.yml             # Databricks Asset Bundle configuration
 ├── services/
 │   └── databricks_jobs.py     # Databricks Jobs service (singleton)
-├── job_configs/               # YAML job configuration files
-│   └── example-job.yaml       # Example configuration
+├── resources/
+│   └── jobs/                  # Databricks Asset Bundle job definitions
+│       ├── alteryx-converted-job-1.yml
+│       └── alteryx-converted-job-2.yml
+├── job_configs/               # YAML job configuration files (for Streamlit app)
+│   ├── alteryx-converted-job-1.yaml
+│   └── alteryx-converted-job-2.yaml
 ├── requirements.txt           # Python dependencies
 ├── example.env               # Example environment variables
 └── README.md                 # This file

@@ -1,0 +1,27 @@
+resources:
+  jobs:
+    alteryx-converted-job-2:
+      name: alteryx-converted-job-2
+      description: Alteryx converted job with client name, financial year, and accounting period parameters
+      
+      # Job parameters
+      parameters:
+        - name: client_name
+          default: "Nike"
+        - name: financial_year
+          default: "2025"
+        - name: accounting_period
+          default: "1"
+      
+      # Job tasks - update with your actual notebook/task configuration
+      tasks:
+        - task_key: main_task
+          description: Main task for alteryx-converted-job-2
+          # Update with your actual notebook path or task configuration
+          notebook_task:
+            notebook_path: /path/to/your/notebook
+            base_parameters:
+              client_name: "Nike"
+              financial_year: "2025"
+              accounting_period: "1"
+

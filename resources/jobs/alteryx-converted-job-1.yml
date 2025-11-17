@@ -1,0 +1,28 @@
+resources:
+  jobs:
+    alteryx-converted-job-1:
+      name: alteryx-converted-job-1
+      description: Alteryx converted job with date range and client ID parameters
+      
+      # Job parameters
+      parameters:
+        - name: startDate
+          default: "2025-01-01"
+        - name: endDate
+          default: "2025-12-01"
+        - name: clientID
+          default: "nike"
+      
+      # Job tasks - update with your actual notebook/task configuration
+      tasks:
+        - task_key: main_task
+          description: Main task for alteryx-converted-job-1
+          # Update with your actual notebook path or task configuration
+          notebook_task:
+            notebook_path: /path/to/your/notebook
+            base_parameters:
+              startDate: "2025-01-01"
+              endDate: "2025-12-01"
+              clientID: "nike"
+          
+

@@ -1,0 +1,14 @@
+bundle:
+  name: databricks-workflow-front-end
+
+include:
+  - resources/jobs/*.yml
+
+targets:
+  dev:
+    mode: development
+    workspace:
+      host: https://adb-3737170459724564.4.azuredatabricks.net/
+      profile: ps
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/dev
+
