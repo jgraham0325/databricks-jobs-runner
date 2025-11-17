@@ -19,9 +19,9 @@ resources:
           description: Main task for alteryx-converted-job-2
           # Update with your actual notebook path or task configuration
           notebook_task:
-            notebook_path: /path/to/your/notebook
+            notebook_path: ../../notebooks/alteryx-converted-job-2.py
             base_parameters:
-              client_name: "Nike"
-              financial_year: "2025"
-              accounting_period: "1"
+              client_name: "{{client_name}}"
+              financial_year: "{{financial_year}}"
+              accounting_period: "{{accounting_period}}"
 
