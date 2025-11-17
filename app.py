@@ -12,7 +12,7 @@ load_dotenv()
 
 # Page configuration
 st.set_page_config(
-    page_title="Databricks Workflow Runner",
+    page_title="Databricks Jobs Runner",
     page_icon="🚀",
     layout="wide"
 )
@@ -423,7 +423,7 @@ def main():
                 st.markdown(f"- [{job_name}](?job={job_name})")
     else:
         # Show job selection page
-        st.title("🚀 Databricks Workflow Runner")
+        st.title("🚀 Databricks Jobs Runner")
         st.markdown("Select a job to run from the list below:")
         
         # Create dropdown for job selection

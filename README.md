@@ -1,6 +1,6 @@
-# Databricks Workflow Runner
+# Databricks Jobs Runner
 
-A Streamlit web application for running Databricks Workflows jobs with dynamic parameter configuration. Define job parameters in YAML configuration files and submit jobs through an intuitive web interface.
+A Streamlit web application for running Databricks Jobs with dynamic parameter configuration. Define job parameters in YAML configuration files and submit jobs through an intuitive web interface.
 
 ## Technologies Used
 
@@ -136,7 +136,7 @@ Your Databricks service principal needs the following permissions:
 
 - `CAN MANAGE RUN` permission on the jobs you want to run
 
-See [Control access to a job](https://docs.databricks.com/en/workflows/jobs/manage-access.html) for more information.
+See [Control access to a job](https://docs.databricks.com/en/jobs/manage-access.html) for more information.
 
 ## Project Structure
 
